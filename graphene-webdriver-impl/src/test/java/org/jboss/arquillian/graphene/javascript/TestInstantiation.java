@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 import org.jboss.arquillian.graphene.javascript.JSInterfaceFactory;
 import org.junit.Test;
 
-public class TestJSInterfaceInstantiation {
+public class TestInstantiation {
 
     @JavaScript
     public static interface TestingInterface {

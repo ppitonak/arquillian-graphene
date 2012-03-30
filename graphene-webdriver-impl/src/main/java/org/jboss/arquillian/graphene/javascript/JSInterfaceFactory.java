@@ -4,7 +4,6 @@ import java.lang.reflect.Proxy;
 
 public class JSInterfaceFactory<T> {
 
-    private Class<T> jsInterface;
     private JSInterfaceHandler handler;
 
     private JSInterfaceFactory(Class<T> jsInterface) {
@@ -13,9 +12,8 @@ public class JSInterfaceFactory<T> {
             throw new IllegalArgumentException("interface must be provided");
         }
 
-        this.jsInterface = jsInterface;
-        ExecutionResolver resolver = getResolver();
-        this.handler = new JSInterfaceHandler(jsInterface, resolver);
+        this.handler = new JSInterfaceHandler(new JSTarget(jsInterface));
+
     }
 
     public static <T> JSInterfaceFactory<T> create(Class<T> jsInterface) {
@@ -24,18 +22,8 @@ public class JSInterfaceFactory<T> {
 
     @SuppressWarnings("unchecked")
     public T instantiate() {
+        Class<?> jsInterface = handler.getTarget().getInterface();
         return (T) Proxy.newProxyInstance(jsInterface.getClassLoader(), new Class<?>[] { jsInterface }, handler);
     }
 
-    private ExecutionResolver getResolver() {
-        try {
-            return getJavaScriptAnnotation().methodResolver().newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException("resolver can't be instantied");
-        }
-    }
-
-    public JavaScript getJavaScriptAnnotation() {
-        return jsInterface.getAnnotation(JavaScript.class);
-    }
 }

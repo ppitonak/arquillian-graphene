@@ -5,17 +5,20 @@ import java.lang.reflect.Method;
 
 public class JSInterfaceHandler implements InvocationHandler {
 
-    private Class<?> jsInterface;
-    private ExecutionResolver resolver;
+    private JSTarget target;
 
-    public JSInterfaceHandler(Class<?> jsInterface, ExecutionResolver resolver) {
-        this.jsInterface = jsInterface;
-        this.resolver = resolver;
+    public JSInterfaceHandler(JSTarget jsTarget) {
+        this.target = jsTarget;
+    }
+    
+    public JSTarget getTarget() {
+        return target;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        // TODO Auto-generated method stub
+        JSCall call = new JSCall(new JSMethod(target, method), args);
+        target.getResolver().execute(call);
         return null;
     }
 
