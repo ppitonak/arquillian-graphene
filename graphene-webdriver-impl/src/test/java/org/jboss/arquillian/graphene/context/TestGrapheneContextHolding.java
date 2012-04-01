@@ -25,11 +25,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
+
 import org.jboss.arquillian.graphene.context.GrapheneContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -85,5 +88,17 @@ public class TestGrapheneContextHolding {
     @Test(expected = IllegalArgumentException.class)
     public void when_set_null_instance_to_context_then_context_throws_exception() {
         GrapheneContext.set(null);
+    }
+
+    @Test
+    public void context_should_determine_that_holds_instance_of_some_interface() {
+        GrapheneContext.set(new TestingDriverStub());
+        assertTrue(GrapheneContext.holdsInstanceOf(TakesScreenshot.class));
+    }
+
+    @Test
+    public void context_should_fail_when_checked_for_being_instance_of_non_implemented_class() {
+        GrapheneContext.set(new TestingDriverStub());
+        assertFalse(GrapheneContext.holdsInstanceOf(Collection.class));
     }
 }
