@@ -37,4 +37,19 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    
+    <build>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/javascript</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>${basedir}/src/test/javascript</directory>
+                <filtering>false</filtering>
+            </testResource>
+        </testResources>
+    </build>
 </project>
