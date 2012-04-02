@@ -22,7 +22,6 @@
 package org.jboss.arquillian.graphene.context;
 
 import org.jboss.arquillian.graphene.context.GrapheneProxy.FutureTarget;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
 /**
