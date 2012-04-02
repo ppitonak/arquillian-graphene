@@ -17,9 +17,9 @@ public class JSInterfaceHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        args = (args != null) ? args : new Object[]{};
         JSCall call = new JSCall(new JSMethod(target, method), args);
-        target.getResolver().execute(call);
-        return null;
+        return target.getResolver().execute(call);
     }
 
 }

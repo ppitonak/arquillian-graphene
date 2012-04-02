@@ -1,5 +1,10 @@
 package org.jboss.arquillian.graphene.javascript;
 
+import java.util.Arrays;
+import java.util.List;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 public class JSCall {
 

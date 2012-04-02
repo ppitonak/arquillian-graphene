@@ -1,8 +1,7 @@
 package org.jboss.arquillian.graphene.javascript;
 
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.arquillian.graphene.context.GrapheneContext;
@@ -15,9 +14,41 @@ public class DefaultExecutionResolver implements ExecutionResolver {
     private JavascriptExecutor browser = GrapheneContext.getProxyForInterfaces(JavascriptExecutor.class);
 
     @Override
-    public void execute(JSCall call) {
+    public Object execute(JSCall call) {
+        checkBrowser();
         String script = resolveScriptToExecute(call);
-        browser.executeScript(script);
+
+        Object returnValue = browser.executeScript(script);
+        return cast(call, returnValue);
+    }
+
+    private Object cast(JSCall call, Object returnValue) {
+        Class<?> returnType = call.getMethod().getMethod().getReturnType();
+
+        if (returnType.isEnum()) {
+            return castToEnum(returnType, returnValue);
+        }
+
+        return returnValue;
+    }
+
+    private Object castToEnum(Class<?> returnType, Object returnValue) {
+        try {
+            Method method = returnType.getMethod("valueOf", String.class);
+            return method.invoke(null, returnValue.toString());
+        } catch (Exception e) {
+            throw new IllegalStateException("returnValue '" + returnValue + "' can't be cast to enum value", e);
+        }
+
+    }
+
+    private void checkBrowser() {
+        if (!GrapheneContext.isInitialized()) {
+            throw new IllegalStateException("current browser needs to be initialized; use GrapheneContext.set(browser)");
+        }
+        if (!GrapheneContext.holdsInstanceOf(JavascriptExecutor.class)) {
+            throw new IllegalStateException("current browser needs to be instance of JavascriptExecutor");
+        }
     }
 
     protected String resolveScriptToExecute(JSCall call) {
@@ -35,20 +66,12 @@ public class DefaultExecutionResolver implements ExecutionResolver {
         return call.getMethod().getName();
     }
 
-    protected Object[] resolveArguments(JSCall call) {
-        return call.getArguments();
+    protected String resolveArguments(JSCall call) {
+        return StringUtils.join(call.getArguments(), ',');
     }
 
     protected String resolveOverloadedInterfaceName(JSTarget target) {
-        String name = target.getInterface().getSimpleName();
-
-        List<String> options = new LinkedList<String>();
-        options.add(StringUtils.capitalize(name));
-        options.add(StringUtils.uncapitalize(name));
-
-        String separatedOptions = StringUtils.join(options, " || ");
-
-        return "(" + separatedOptions + ")";
+        return StringUtils.uncapitalize(target.getInterface().getSimpleName());
     }
 
 }
