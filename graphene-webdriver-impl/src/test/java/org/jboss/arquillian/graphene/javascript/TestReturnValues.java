@@ -15,7 +15,7 @@ import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-public class TestReturnValues {
+public class TestReturnValues extends AbstractJavaScriptTest {
 
     @Spy
     TestingDriverStub executor = new TestingDriverStub();
@@ -35,11 +35,6 @@ public class TestReturnValues {
         Integer returnIntegerObject();
 
         TestingEnum returnEnumValue();
-    }
-
-    public enum TestingEnum {
-        VALUE1,
-        VALUE2
     }
 
     @Before
@@ -63,7 +58,7 @@ public class TestReturnValues {
         instance.voidMethod();
 
         // then
-        verify(executor, only()).executeScript("base.voidMethod()");
+        verify(executor, only()).executeScript(invocation("base", "voidMethod"));
     }
 
     @Test
@@ -74,7 +69,7 @@ public class TestReturnValues {
 
         // then
         assertEquals(answer, result);
-        verify(executor, only()).executeScript("base.returnString()");
+        verify(executor, only()).executeScript(invocation("base", "returnString"));
     }
 
     @Test
@@ -85,7 +80,7 @@ public class TestReturnValues {
 
         // then
         assertEquals(answer, result);
-        verify(executor, only()).executeScript("base.returnInteger()");
+        verify(executor, only()).executeScript(invocation("base", "returnInteger"));
     }
 
     @Test
@@ -96,7 +91,7 @@ public class TestReturnValues {
 
         // then
         assertEquals(answer, result);
-        verify(executor, only()).executeScript("base.returnIntegerObject()");
+        verify(executor, only()).executeScript(invocation("base", "returnIntegerObject"));
     }
 
     @Test
@@ -107,7 +102,7 @@ public class TestReturnValues {
 
         // then
         assertEquals(answer, result);
-        verify(executor, only()).executeScript("base.returnIntegerObject()");
+        verify(executor, only()).executeScript(invocation("base", "returnIntegerObject"));
     }
 
     @Test
@@ -118,6 +113,6 @@ public class TestReturnValues {
 
         // then
         assertEquals(TestingEnum.VALUE2, result);
-        verify(executor, only()).executeScript("base.returnEnumValue()");
+        verify(executor, only()).executeScript(invocation("base", "returnEnumValue"));
     }
 }

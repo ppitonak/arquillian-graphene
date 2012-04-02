@@ -8,7 +8,7 @@ import org.jboss.arquillian.graphene.context.GrapheneContext;
 import org.jboss.arquillian.graphene.context.TestingDriverStub;
 import org.junit.Test;
 
-public class TestExecution {
+public class TestExecution extends AbstractJavaScriptTest {
 
     @JavaScript
     public static interface TestingInterface {
@@ -31,7 +31,7 @@ public class TestExecution {
         instance.method();
 
         // then
-        verify(executor, only()).executeScript("testingInterface.method()");
+        verify(executor, only()).executeScript(invocation("testingInterface", "method"));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class TestExecution {
         instance.namedMethod();
 
         // then
-        verify(executor, only()).executeScript("testingInterface.anotherMethodName()");
+        verify(executor, only()).executeScript(invocation("testingInterface", "anotherMethodName"));
     }
 
     @JavaScript("base")
@@ -68,6 +68,6 @@ public class TestExecution {
         instance.method();
 
         // then
-        verify(executor, only()).executeScript("base.method()");
+        verify(executor, only()).executeScript(invocation("base", "method"));
     }
 }

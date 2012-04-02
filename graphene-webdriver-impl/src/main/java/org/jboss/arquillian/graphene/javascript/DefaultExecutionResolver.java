@@ -2,6 +2,7 @@ package org.jboss.arquillian.graphene.javascript;
 
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
+import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.arquillian.graphene.context.GrapheneContext;
@@ -9,7 +10,7 @@ import org.openqa.selenium.JavascriptExecutor;
 
 public class DefaultExecutionResolver implements ExecutionResolver {
 
-    private static String CALL = "{0}.{1}({2})";
+    private static String CALL = "{0}.{1}.apply({0}, arguments)";
 
     private JavascriptExecutor browser = GrapheneContext.getProxyForInterfaces(JavascriptExecutor.class);
 
@@ -18,28 +19,46 @@ public class DefaultExecutionResolver implements ExecutionResolver {
         checkBrowser();
         String script = resolveScriptToExecute(call);
 
-        Object returnValue = browser.executeScript(script);
-        return cast(call, returnValue);
+        Object[] arguments = castArguments(call.getArguments());
+        Object returnValue = browser.executeScript(script, arguments);
+        return castResult(call, returnValue);
     }
 
-    private Object cast(JSCall call, Object returnValue) {
+    private Object[] castArguments(Object[] arguments) {
+        Object[] result = Arrays.copyOf(arguments, arguments.length);
+        
+        for (int i = 0; i < result.length; i++) {
+            Object arg = result[i];
+            
+            if (arg.getClass().isEnum()) {
+                result[i] = castEnumToString(arg);
+            }
+        }
+        
+        return result;
+    }
+    
+    private Object castEnumToString(Object enumValue) {
+        return enumValue.toString();
+    }
+
+    private Object castResult(JSCall call, Object returnValue) {
         Class<?> returnType = call.getMethod().getMethod().getReturnType();
 
         if (returnType.isEnum()) {
-            return castToEnum(returnType, returnValue);
+            return castStringToEnum(returnType, returnValue);
         }
 
         return returnValue;
     }
 
-    private Object castToEnum(Class<?> returnType, Object returnValue) {
+    private Object castStringToEnum(Class<?> returnType, Object returnValue) {
         try {
             Method method = returnType.getMethod("valueOf", String.class);
             return method.invoke(null, returnValue.toString());
         } catch (Exception e) {
             throw new IllegalStateException("returnValue '" + returnValue + "' can't be cast to enum value", e);
         }
-
     }
 
     private void checkBrowser() {
@@ -52,7 +71,7 @@ public class DefaultExecutionResolver implements ExecutionResolver {
     }
 
     protected String resolveScriptToExecute(JSCall call) {
-        return MessageFormat.format(CALL, resolveTargetName(call.getTarget()), resolveMethodName(call), resolveArguments(call));
+        return MessageFormat.format(CALL, resolveTargetName(call.getTarget()), resolveMethodName(call));
     }
 
     protected String resolveTargetName(JSTarget target) {
@@ -64,10 +83,6 @@ public class DefaultExecutionResolver implements ExecutionResolver {
 
     protected String resolveMethodName(JSCall call) {
         return call.getMethod().getName();
-    }
-
-    protected String resolveArguments(JSCall call) {
-        return StringUtils.join(call.getArguments(), ',');
     }
 
     protected String resolveOverloadedInterfaceName(JSTarget target) {
