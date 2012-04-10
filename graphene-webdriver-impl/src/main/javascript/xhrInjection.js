@@ -151,12 +151,14 @@ Graphene.xhrInjection = (function() {
      */
     var invokeNextInterceptor = function(wrapper, methodName, args, i) {
         var context = {
-            invoke : function() {
+            xhrOriginal : wrapper.xhr,
+            xhrWrapper : wrapper,
+            proceed : function() {
                 return invokeInterceptorChain(wrapper, methodName, args, i + 1);
             }
         };
         var interceptor = interceptors[methodName][i];
-        return interceptor(context, args);
+        return interceptor.call(wrapper, context, args);
     }
 
     /**
@@ -190,7 +192,7 @@ Graphene.xhrInjection = (function() {
          * 
          * Interceptor is function with two params: context and args.
          * 
-         * Sample: function(context, args) { context.invoke(args); }
+         * Sample: function(context, args) { context.proceed(args); }
          */
         onAbort : function(interceptor) {
             registerInterceptor('abort', interceptor);
@@ -200,7 +202,7 @@ Graphene.xhrInjection = (function() {
          * 
          * Interceptor is function with two params: context and args.
          * 
-         * Sample: function(context, args) { context.invoke(args); }
+         * Sample: function(context, args) { context.proceed(args); }
          */
         onOpen : function(interceptor) {
             registerInterceptor('open', interceptor);
@@ -210,7 +212,7 @@ Graphene.xhrInjection = (function() {
          * 
          * Interceptor is function with two params: context and args.
          * 
-         * Sample: function(context, args) { context.invoke(args); }
+         * Sample: function(context, args) { context.proceed(args); }
          */
         onGetAllResponseHeaders : function(interceptor) {
             registerInterceptor('getAllResponseHeaders', interceptor);
@@ -220,7 +222,7 @@ Graphene.xhrInjection = (function() {
          * 
          * Interceptor is function with two params: context and args.
          * 
-         * Sample: function(context, args) { context.invoke(args); }
+         * Sample: function(context, args) { context.proceed(args); }
          */
         onSend : function(interceptor) {
             registerInterceptor('send', interceptor);
@@ -230,7 +232,7 @@ Graphene.xhrInjection = (function() {
          * 
          * Interceptor is function with two params: context and args.
          * 
-         * Sample: function(context, args) { context.invoke(args); }
+         * Sample: function(context, args) { context.proceed(args); }
          */
         onSetRequestHeader : function(interceptor) {
             registerInterceptor('setRequestHeader', interceptor);
@@ -240,7 +242,7 @@ Graphene.xhrInjection = (function() {
          * 
          * Interceptor is function with two params: context and args.
          * 
-         * Sample: function(context, args) { context.invoke(args); }
+         * Sample: function(context, args) { context.proceed(args); }
          */
         onreadystatechange : function(interceptor) {
             registerInterceptor('onreadystatechange', interceptor);

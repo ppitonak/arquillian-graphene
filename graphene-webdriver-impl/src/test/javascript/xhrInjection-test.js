@@ -81,7 +81,7 @@ module("XHR Injection");
             ok(!interceptor2Started);
             ok(!interceptor2Finished);
 
-            var result = ctx.invoke(args);
+            var result = ctx.proceed(args);
 
             ok(abortInvoked);
             ok(interceptor2Started);
@@ -98,7 +98,7 @@ module("XHR Injection");
             ok(interceptor1Started);
             ok(!interceptor1Finished);
 
-            var result = ctx.invoke(args);
+            var result = ctx.proceed(args);
 
             ok(abortInvoked);
             ok(interceptor1Started);
@@ -156,7 +156,7 @@ module("XHR Injection");
             ok(!interceptor2Started);
             ok(!interceptor2Finished);
 
-            var result = ctx.invoke(args);
+            var result = ctx.proceed(args);
 
             ok(statechanged);
             ok(interceptor2Started);
@@ -173,7 +173,7 @@ module("XHR Injection");
             ok(interceptor1Started);
             ok(!interceptor1Finished);
 
-            var result = ctx.invoke(args);
+            var result = ctx.proceed(args);
 
             ok(statechanged);
             ok(interceptor1Started);
