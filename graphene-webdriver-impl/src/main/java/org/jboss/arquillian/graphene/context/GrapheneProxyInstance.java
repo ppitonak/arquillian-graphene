@@ -29,4 +29,5 @@ package org.jboss.arquillian.graphene.context;
  * @author Lukas Fryc
  */
 public interface GrapheneProxyInstance {
+    <T> T unwrap();
 }

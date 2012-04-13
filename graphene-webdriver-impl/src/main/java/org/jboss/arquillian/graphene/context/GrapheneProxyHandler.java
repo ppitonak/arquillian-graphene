@@ -82,9 +82,18 @@ class GrapheneProxyHandler implements MethodInterceptor, InvocationHandler {
      * Decides whenever the result of invocation is proxyable and if yes, it returns the proxy using new instance of
      * {@link GrapheneProxyHandler} wrapping the result of invocation.
      * </p>
+     * 
+     * <p>
+     * The method specifically handles {@link GrapheneProxyInstance#unwrap()} method which returns the real target for
+     * invocation.
      */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        // handle the GrapheneProxyInstance's method unwrap
+        if (method.equals(GrapheneProxyInstance.class.getMethod("unwrap"))) {
+            return getTarget();
+        }
+
         Object result = invokeReal(method, args);
 
         if (isProxyable(method, args)) {
