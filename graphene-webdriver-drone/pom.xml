@@ -86,8 +86,6 @@
             <artifactId>arquillian-config-impl-base</artifactId>
             <scope>test</scope>
         </dependency>
-        
-        
         <dependency>
             <groupId>org.jboss.arquillian.core</groupId>
             <artifactId>arquillian-core-impl-base</artifactId>
@@ -100,7 +98,6 @@
             <version>${version.arquillian.core}</version>
             <classifier>tests</classifier>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.arquillian.graphene</groupId>
             <artifactId>graphene-webdriver-impl</artifactId>
@@ -108,15 +105,6 @@
             <classifier>tests</classifier>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
 

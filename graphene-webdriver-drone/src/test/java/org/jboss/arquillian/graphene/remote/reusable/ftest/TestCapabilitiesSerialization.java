@@ -14,38 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.ajocado.drone.example;
+package org.jboss.arquillian.graphene.remote.reusable.ftest;
 
-import static org.junit.Assert.assertTrue;
+import static junit.framework.Assert.assertTrue;
+
+import java.io.Serializable;
 
 import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.graphene.context.GrapheneProxyInstance;
-import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * @author Lukas Fryc
  */
-@RunWith(Arquillian.class)
-public class GrapheneHtmlUnitDriverTestCase {
+public class TestCapabilitiesSerialization extends AbstractInBrowserTest {
 
     @Drone
-    HtmlUnitDriver browser;
-
+    RemoteWebDriver driver;
+    
     @Test
-    public void created_instance_should_be_instance_of_requested_driver() {
-        assertTrue("browser must be HtmlUnitDriver", browser instanceof HtmlUnitDriver);
-    }
+    public void whenGetCapabilitiesFromRunningSessionThenItShouldBeSerializable() {
+        Capabilities initializedCapabilities = driver.getCapabilities();
 
-    @Test
-    public void created_instance_should_be_instance_of_GrapheneProxyInstance() {
-        assertTrue("browser must be proxy", browser instanceof GrapheneProxyInstance);
-    }
-
-    @Test
-    public void created_instance_should_be_able_to_navigate_to_some_page() {
-        browser.navigate().to("http://127.0.0.1:14444");
+        assertTrue("Capabilities obtained from running session should be serializable",
+                initializedCapabilities instanceof Serializable);
+        
+        driver.quit();
     }
 }

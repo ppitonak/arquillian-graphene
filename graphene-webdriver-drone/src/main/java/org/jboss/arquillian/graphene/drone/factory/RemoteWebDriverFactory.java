@@ -17,6 +17,7 @@
 package org.jboss.arquillian.graphene.drone.factory;
 
 import java.lang.annotation.Annotation;
+import java.net.URL;
 
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.drone.spi.Configurator;
@@ -64,7 +65,17 @@ public class RemoteWebDriverFactory implements
      * @see org.jboss.arquillian.drone.spi.Instantiator#createInstance(org.jboss.arquillian.drone.spi.DroneConfiguration)
      */
     public RemoteWebDriver createInstance(TypedWebDriverConfiguration<RemoteWebDriverConfiguration> configuration) {
-        return new RemoteWebDriver(URLUtils.buildUrl("http://127.0.0.1:4444/wd/hub"), DesiredCapabilities.firefox());
+        URL hubUrl = getHubUrl(configuration);
+        DesiredCapabilities capabilities = getDesiredCapabilities(configuration);
+        return new RemoteWebDriver(hubUrl, capabilities);
+    }
+    
+    protected URL getHubUrl(TypedWebDriverConfiguration<RemoteWebDriverConfiguration> configuration) {
+        return URLUtils.buildUrl("http://127.0.0.1:4444/wd/hub");
+    }
+    
+    protected DesiredCapabilities getDesiredCapabilities(TypedWebDriverConfiguration<RemoteWebDriverConfiguration> configuration) {
+        return DesiredCapabilities.firefox();
     }
 
     /*

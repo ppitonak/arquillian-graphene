@@ -29,6 +29,7 @@ import org.jboss.arquillian.graphene.drone.factory.GrapheneInternetExplorerDrive
 import org.jboss.arquillian.graphene.drone.factory.GrapheneRemoteWebDriverFactory;
 import org.jboss.arquillian.graphene.drone.factory.GrapheneWebDriverFactory;
 import org.jboss.arquillian.graphene.drone.factory.RemoteWebDriverFactory;
+import org.jboss.arquillian.graphene.remote.reusable.ReusableRemoteWebDriverExtension;
 
 /**
  * Arquillian Drone support Graphene and WebDriver and its implementations
@@ -74,5 +75,7 @@ public class DroneGrapheneExtension implements LoadableExtension {
         builder.service(Configurator.class, GrapheneRemoteWebDriverFactory.class);
         builder.service(Instantiator.class, GrapheneRemoteWebDriverFactory.class);
         builder.service(Destructor.class, GrapheneRemoteWebDriverFactory.class);
+
+        builder.observer(ReusableRemoteWebDriverExtension.class);
     }
 }
