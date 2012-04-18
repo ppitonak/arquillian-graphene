@@ -20,7 +20,7 @@ Graphene.formSubmissionInterception = (function() {
     var passThroughForm = null;
     var boundHandler;
 
-    var submitHandler = function(e) {
+    function submitHandler(e) {
         var form = e.target;
 
         // when the submission should be passed through
@@ -32,29 +32,43 @@ Graphene.formSubmissionInterception = (function() {
             e.stopImmediatePropagation();
             return false;
         }
-    };
+    }
+    ;
+
+    function reset() {
+        lastSubmittedForm = null;
+        boundHandler = null;
+    }
 
     // PUBLIC METHODS
     return {
-        inject : function() {
+        bind : function() {
             if (!boundHandler) {
                 boundHandler = $.proxy(submitHandler, this);
                 $(document).bind('submit', boundHandler);
             }
         },
 
-        uninject : function() {
+        unbind : function() {
             if (boundHandler) {
                 $(document).unbind('submit', boundHandler);
-                boundHandler = null;
+                reset();
             }
+        },
+
+        isBound : function() {
+            return !!boundHandler;
+        },
+
+        isSubmissionPaused : function() {
+            return !!lastSubmittedForm;
         },
 
         getSubmittedForm : function() {
             return lastSubmittedForm;
         },
 
-        submitForm : function() {
+        continueSubmission : function() {
             passThroughForm = lastSubmittedForm;
             lastSubmittedForm.submit();
             lastSubmittedForm = null;

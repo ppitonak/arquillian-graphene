@@ -3,6 +3,20 @@ module("Form Submission Interception");
 (function() {
 
     var fsi = Graphene.formSubmissionInterception;
+    var form;
+    var submitButton;
+
+    QUnit.testStart = function() {
+        form = document.getElementById("form1");
+        submitButton = $(document.getElementById("form1:submit"));
+        window.form1Submitted = false;
+        if (fsi) {
+            try {
+                fsi.unbind();
+            } catch (e) {
+            }
+        }
+    };
 
     // TESTS
 
@@ -11,70 +25,54 @@ module("Form Submission Interception");
     });
 
     test("form can be submitted", function() {
-        $()
-        var form = document.getElementById("form1");
-        var submitButton = $(document.getElementById("form1:submit"));
-        window.form1Submitted = false;
-
+        // when
         submitButton.click();
-        ok(window.form1Submitted);
+        // then
+        ok(window.form1Submitted, "form should be submitted");
     });
-
-    test("form is prevented to being submit by test", function() {
-        // given
-        var form = document.getElementById("form1");
-        var submitButton = $(document.getElementById("form1:submit"));
-        window.form1Submitted = false;
-
-        var handler = function(e) {
-            ok(e.target === form);
-            return false;
-        };
-
-        $(document).bind('submit', handler);
-
-        submitButton.click();
-        ok(!window.form1Submitted);
-
-        $(document).unbind('submit', handler);
+    
+    test("FSI provides information whenever it is bound", function() {
+        ok(!fsi.isBound());
+        fsi.bind();
+        ok(fsi.isBound());
+        fsi.unbind();
+        ok(!fsi.isBound());
     });
 
     test("form submission can be intercepted", function() {
-        // given
-        var form = document.getElementById("form1");
-        var submitButton = $(document.getElementById("form1:submit"));
-        window.form1Submitted = false;
-
-        ok(!fsi.getSubmittedForm());
-
         // when
-        fsi.inject()
+        fsi.bind()
         submitButton.click();
 
         // then
         ok(!window.form1Submitted);
-        ok(fsi.getSubmittedForm() === form);
+    });
+    
+    test("FSI provides information whenever the form submission is paused", function() {
+        // having
+        ok(!fsi.isSubmissionPaused());
+        
+        // when
+        fsi.bind();
+        ok(!fsi.isSubmissionPaused());
+        
+        submitButton.click();
+        ok(fsi.isSubmissionPaused());
 
-        // finally
-        fsi.uninject();
+        // then
+        ok(!window.form1Submitted);
     });
 
     test("when form submission is intercepted then it can be continued", function() {
-        // given
-        var form = document.getElementById("form1");
-        var submitButton = $(document.getElementById("form1:submit"));
-        window.form1Submitted = false;
-        fsi.inject()
+        fsi.bind()
         submitButton.click();
         ok(!window.form1Submitted);
 
         // when
-        fsi.submitForm();
+        fsi.continueSubmission();
         ok(window.form1Submitted);
         ok(!fsi.getSubmittedForm());
-
-        // finally
-        fsi.uninject();
+        ok(!fsi.getSubmittedForm());
     });
 
 })();
