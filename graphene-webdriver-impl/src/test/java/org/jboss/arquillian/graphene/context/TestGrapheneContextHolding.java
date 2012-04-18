@@ -27,7 +27,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
-import org.jboss.arquillian.graphene.context.GrapheneContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -42,6 +41,9 @@ public class TestGrapheneContextHolding {
 
     @Mock
     WebDriver driver;
+
+    @Mock(extraInterfaces = GrapheneProxyInstance.class)
+    WebDriver driverProxy;
 
     @Before
     public void initMocks() {
@@ -100,5 +102,10 @@ public class TestGrapheneContextHolding {
     public void context_should_fail_when_checked_for_being_instance_of_non_implemented_class() {
         GrapheneContext.set(new TestingDriverStub());
         assertFalse(GrapheneContext.holdsInstanceOf(Collection.class));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void when_set_proxy_instance_to_context_then_context_throws_exception() {
+        GrapheneContext.set(driverProxy);
     }
 }

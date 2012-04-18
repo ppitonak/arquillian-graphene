@@ -22,6 +22,7 @@
 package org.jboss.arquillian.graphene.context;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
@@ -29,6 +30,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
@@ -37,9 +41,13 @@ import org.openqa.selenium.WebElement;
 /**
  * @author Lukas Fryc
  */
+@RunWith(MockitoJUnitRunner.class)
 public class TestGrapheneContextProxying {
 
     private static final String SAMPLE_STRING = "sample";
+
+    @Mock
+    WebDriver driver;
 
     @Test
     public void context_provides_proxy_which_delegates_to_current_context() {
@@ -57,7 +65,6 @@ public class TestGrapheneContextProxying {
     @Test
     public void when_proxy_returns_webdriver_api_then_another_proxy_is_returned_wrapping_the_result_of_invocation() {
         // having
-        WebDriver driver = mock(WebDriver.class);
         Navigation navigation = mock(Navigation.class);
 
         // when
@@ -76,7 +83,6 @@ public class TestGrapheneContextProxying {
     @Test
     public void when_proxy_returns_result_of_invocation_with_arguments_then_returned_object_is_proxied() {
         // having
-        WebDriver driver = mock(WebDriver.class);
         WebElement webElement = mock(WebElement.class);
         By byId = By.id("id");
 
@@ -96,7 +102,6 @@ public class TestGrapheneContextProxying {
     @Test
     public void when_proxy_returns_result_of_invocation_with_arguments_then_returned_object_can_be_invoked() {
         // having
-        WebDriver driver = mock(WebDriver.class);
         WebElement webElement = mock(WebElement.class);
         By byId = By.id("id");
 
@@ -111,6 +116,19 @@ public class TestGrapheneContextProxying {
 
         // verify
         verify(webElement, only()).clear();
+    }
+
+    @Test
+    public void test_that_context_can_be_unwrapped() {
+        // having
+        GrapheneContext.set(driver);
+        WebDriver driverProxy = GrapheneContext.getProxy();
+
+        // when
+        WebDriver unwrapped = ((GrapheneProxyInstance) driverProxy).unwrap();
+
+        // then
+        assertSame(driver, unwrapped);
     }
 
     private static class DriverReturningSampleString extends TestingDriverStub {

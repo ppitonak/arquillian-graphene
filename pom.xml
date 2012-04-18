@@ -18,8 +18,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         
         <!-- Arquillian -->
-        <version.arquillian.core>1.0.0.CR7</version.arquillian.core>
-        <version.arquillian.drone>1.0.0.CR4</version.arquillian.drone>
+        <version.arquillian.core>1.0.0.Final</version.arquillian.core>
+        <version.arquillian.drone>1.0.0.Final</version.arquillian.drone>
         
         <!-- Runtime dependencies -->
         <version.javassist>3.12.1.GA</version.javassist>
@@ -95,7 +95,67 @@
                         <target>1.6</target>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>test-jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>default-test</id>
+                            <goals>
+                                <goal>test</goal>
+                            </goals>
+                            <configuration>
+                                <excludes>
+                                    <exclude>**/ftest/**</exclude>
+                                </excludes>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
+
+
+
+    <profiles>
+        <profile>
+            <id>ftest</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <id>functional-test</id>
+                                    <goals>
+                                        <goal>test</goal>
+                                    </goals>
+                                    <phase>integration-test</phase>
+                                    <configuration>
+                                        <includes>
+                                            <include>**/ftest/**</include>
+                                        </includes>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 </project>

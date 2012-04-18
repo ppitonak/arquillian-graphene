@@ -25,7 +25,7 @@ import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.WebDriver;
 
 /**
  * @author Lukas Fryc
@@ -34,7 +34,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 public class StandaloneModeInitializationTestCase {
 
     @Drone
-    HtmlUnitDriver browser;
+    WebDriver browser;
 
     @Test
     public void created_instance_should_be_able_to_navigate_to_some_page() {

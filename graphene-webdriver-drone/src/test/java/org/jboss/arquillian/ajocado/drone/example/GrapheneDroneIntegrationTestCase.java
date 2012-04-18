@@ -23,20 +23,20 @@ import org.jboss.arquillian.graphene.context.GrapheneProxyInstance;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.WebDriver;
 
 /**
  * @author Lukas Fryc
  */
 @RunWith(Arquillian.class)
-public class GrapheneHtmlUnitDriverTestCase {
+public class GrapheneDroneIntegrationTestCase {
 
     @Drone
-    HtmlUnitDriver browser;
+    WebDriver browser;
 
     @Test
     public void created_instance_should_be_instance_of_requested_driver() {
-        assertTrue("browser must be HtmlUnitDriver", browser instanceof HtmlUnitDriver);
+        assertTrue("browser must be HtmlUnitDriver", browser instanceof WebDriver);
     }
 
     @Test
