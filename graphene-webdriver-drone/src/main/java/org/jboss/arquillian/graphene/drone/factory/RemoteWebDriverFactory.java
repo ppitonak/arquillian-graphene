@@ -75,7 +75,8 @@ public class RemoteWebDriverFactory implements
     }
     
     protected DesiredCapabilities getDesiredCapabilities(TypedWebDriverConfiguration<RemoteWebDriverConfiguration> configuration) {
-        return DesiredCapabilities.firefox();
+        DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+        return capabilities;
     }
 
     /*

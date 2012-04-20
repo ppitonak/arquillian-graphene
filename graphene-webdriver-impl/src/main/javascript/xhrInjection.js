@@ -176,10 +176,12 @@ Graphene.xhrInjection = (function() {
     // PUBLIC METHODS
     return {
         /**
-         * Replaces the original XHR object prototype with XHR wrapper to allow interceptor of XHR methods.
+         * Ensures the interceptor is installed properly
          */
-        inject : function() {
-            replace();
+        install : function() {
+            if (!original) {
+                replace();
+            }
         },
         /**
          * Removes all registered interceptors.

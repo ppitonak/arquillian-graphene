@@ -3,6 +3,7 @@ package org.jboss.arquillian.graphene.javascript;
 import java.lang.reflect.Method;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 public class JSMethod {
 
@@ -37,5 +38,10 @@ public class JSMethod {
         }
 
         return method.getName();
+    }
+    
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }
